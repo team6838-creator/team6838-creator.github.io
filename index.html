@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>X-SHARC | FRC Robotics Team</title>
+  <link rel="icon" type="image/png" href="/download.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,600;0,700;1,300&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    .hero-logo {
+  position: absolute;
+  top: 40%;
+  right: 6rem;
+  transform: translateY(-50%);
+  width: 640px;
+  opacity: 0.9;
+}
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --shark: #050805;
+      --deep: #080f08;
+      --surface: #0f180f;
+      --card: #111f11;
+      --border: #1e301e;
+      --cyan: #4db876;
+      --cyan-dim: #3a9460;
+      --orange: #7ab85a;
+      --white: #f0f4ff;
+      --muted: #4d6b4d;
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-body: 'Barlow', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--shark);
+      color: var(--white);
+      font-family: var(--font-body);
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 3rem;
+      background: rgba(10, 12, 15, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      letter-spacing: 0.12em;
+      color: var(--cyan);
+      text-decoration: none;
+    }
+
+    .nav-logo span { color: var(--orange); }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--cyan); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 8rem 3rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-grid-lines {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(77,184,118,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(77,184,118,0.03) 1px, transparent 1px);
+      background-size: 80px 80px;
+      pointer-events: none;
+    }
+
+    .hero-glow {
+      position: absolute;
+      width: 700px; height: 700px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(77,184,118,0.06) 0%, transparent 70%);
+      top: -200px; right: -200px;
+      pointer-events: none;
+    }
+
+    .hero-glow-2 {
+      position: absolute;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(122,184,90,0.04) 0%, transparent 70%);
+      bottom: -100px; left: 5%;
+      pointer-events: none;
+    }
+
+    .hero-tag {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 1.2rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.2s forwards;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(5rem, 14vw, 13rem);
+      line-height: 0.88;
+      letter-spacing: 0.04em;
+      color: var(--white);
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.4s forwards;
+    }
+
+    .hero-title .accent { color: var(--cyan); }
+    .hero-title .accent-o { color: var(--orange); }
+
+    .hero-sub {
+      font-size: 1.15rem;
+      font-weight: 300;
+      color: var(--muted);
+      margin-top: 2rem;
+      max-width: 500px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.6s forwards;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1.2rem;
+      margin-top: 3rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.8s forwards;
+    }
+
+    .btn {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.9rem 2.2rem;
+      text-decoration: none;
+      transition: all 0.25s;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: var(--cyan);
+      color: var(--shark);
+      font-weight: 700;
+      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    }
+
+    .btn-primary:hover {
+      background: #6dcc8a;
+      transform: translateY(-2px);
+    }
+
+    .btn-ghost {
+      border: 1px solid var(--border);
+      color: var(--muted);
+      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 4rem;
+      margin-top: 5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 1s forwards;
+    }
+
+    .hero-stat-num {
+      font-family: var(--font-display);
+      font-size: 3rem;
+      line-height: 1;
+      color: var(--white);
+    }
+
+    .hero-stat-num span { color: var(--cyan); }
+
+    .hero-stat-label {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 0.3rem;
+    }
+
+    /* ── SECTION COMMON ── */
+    section { padding: 7rem 3rem; }
+
+    .section-tag {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 0.8rem;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.8rem, 6vw, 5.5rem);
+      letter-spacing: 0.04em;
+      line-height: 0.9;
+      color: var(--white);
+    }
+
+    .divider {
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--cyan), transparent);
+      margin: 2rem 0;
+    }
+
+
+
+    /* ── ABOUT / MISSION ── */
+    #about {
+      background: var(--deep);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .about-grid {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 860px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .about-text { padding-top: 0.5rem; width: 100%; }
+
+    .about-intro {
+      font-size: 1.1rem;
+      color: var(--white);
+      font-weight: 400;
+      line-height: 1.8;
+      margin-bottom: 1.4rem;
+    }
+
+    .about-body {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.9;
+      margin-bottom: 1rem;
+    }
+
+    .about-divider-full {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 3rem 0;
+    }
+
+    .about-grid .divider { margin: 2rem auto; }
+
+    .mission-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+      width: 100%;
+      text-align: left;
+    }
+
+    .mission-item {
+      display: flex;
+      gap: 1.2rem;
+      align-items: flex-start;
+      padding: 1.2rem 1.5rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--cyan);
+      clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+      transition: border-left-color 0.2s;
+    }
+
+    .mission-item:hover { border-left-color: var(--orange); }
+
+    .mission-num {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--cyan);
+      letter-spacing: 0.1em;
+      padding-top: 0.15rem;
+      flex-shrink: 0;
+    }
+
+    .mission-text {
+      font-size: 0.9rem;
+      color: var(--white);
+      line-height: 1.6;
+    }
+
+    /* ── IMPACT ── */
+    #impact { max-width: 1200px; margin: 0 auto; }
+
+    .impact-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .impact-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .impact-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+      transition: transform 0.25s, border-color 0.25s;
+      position: relative;
+    }
+
+    .impact-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--cyan), var(--orange));
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+
+    .impact-card:hover { transform: translateY(-4px); border-color: var(--cyan); }
+    .impact-card:hover::before { opacity: 1; }
+
+    .impact-num {
+      font-family: var(--font-display);
+      font-size: 4.5rem;
+      line-height: 1;
+      color: var(--cyan);
+      margin-bottom: 0.5rem;
+    }
+
+    .impact-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── DEPARTMENTS ── */
+    #departments {
+      background: var(--deep);
+      border-top: 1px solid var(--border);
+    }
+
+    .dept-layout {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .dept-header { margin-bottom: 4rem; }
+
+    .dept-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 3rem;
+      overflow-x: auto;
+    }
+
+    .dept-tab {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.8rem 1.6rem;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+      white-space: nowrap;
+    }
+
+    .dept-tab.active, .dept-tab:hover {
+      color: var(--cyan);
+      border-bottom-color: var(--cyan);
+    }
+
+    .dept-panels { position: relative; }
+
+    .dept-panel { display: none; }
+    .dept-panel.active { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+
+    .dept-icon-box {
+      width: 80px; height: 80px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2rem;
+      clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+    }
+
+    .dept-monogram {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--cyan);
+    }
+
+    .dept-name {
+      font-family: var(--font-display);
+      font-size: 3rem;
+      letter-spacing: 0.06em;
+      color: var(--white);
+      margin-bottom: 0.5rem;
+    }
+
+    .dept-tagline {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      color: var(--cyan);
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    .dept-desc {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .dept-steps { display: flex; flex-direction: column; gap: 1rem; }
+
+    .dept-step {
+      display: flex;
+      gap: 1.2rem;
+      padding: 1rem 1.2rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      align-items: flex-start;
+    }
+
+    .step-num {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      color: var(--orange);
+      letter-spacing: 0.1em;
+      padding-top: 0.2rem;
+      flex-shrink: 0;
+    }
+
+    .step-content strong {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 0.2rem;
+    }
+
+    .step-content p {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ── TROPHIES ── */
+    #trophies { max-width: 1200px; margin: 0 auto; }
+
+    .trophy-header { margin-bottom: 4rem; }
+
+    .trophy-timeline {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    .trophy-era {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 2rem;
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
+    }
+
+    .era-label {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      letter-spacing: 0.08em;
+      color: var(--white);
+      margin-bottom: 0.3rem;
+    }
+
+    .era-sub {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    .trophy-list { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; }
+
+    .trophy-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.7rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+    }
+
+    .trophy-item:last-child { border-bottom: none; }
+
+    .trophy-badge {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--cyan);
+      flex-shrink: 0;
+      margin-top: 0.45rem;
+    }
+
+    .trophy-badge.finalist {
+      background: var(--muted);
+    }
+
+    .trophy-badge.world {
+      background: var(--orange);
+    }
+
+    .trophy-year {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--cyan);
+      letter-spacing: 0.08em;
+      flex-shrink: 0;
+      width: 55px;
+    }
+
+    .trophy-desc {
+      color: var(--white);
+      line-height: 1.4;
+    }
+
+    .trophy-award {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      color: var(--orange);
+      letter-spacing: 0.08em;
+      margin-left: auto;
+      flex-shrink: 0;
+      text-align: right;
+    }
+
+    /* ── FRC INFO ── */
+    #frc {
+      background: var(--deep);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .frc-inner {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .frc-body {
+      font-size: 1.1rem;
+      color: var(--muted);
+      line-height: 1.9;
+      margin-top: 2rem;
+    }
+
+    .frc-body strong { color: var(--white); font-weight: 600; }
+
+    /* ── CONTACT ── */
+    #contact {
+      background: var(--deep);
+      border-top: 1px solid var(--border);
+    }
+
+    .contact-inner {
+      max-width: 700px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .contact-email-display {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      color: var(--cyan);
+      margin-top: 0.8rem;
+      display: block;
+      text-decoration: none;
+    }
+
+    .contact-email-display:hover { text-decoration: underline; }
+
+    .contact-form {
+      margin-top: 3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      text-align: left;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .form-group label {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .form-group input,
+    .form-group textarea {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      font-weight: 300;
+      padding: 0.85rem 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+      resize: none;
+      clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder { color: var(--border); }
+
+    .form-group input:focus,
+    .form-group textarea:focus { border-color: var(--cyan); }
+
+    .form-submit {
+      align-self: flex-start;
+    }
+
+    .form-status {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      padding: 0.6rem 0;
+      min-height: 1.5rem;
+      color: var(--cyan);
+    }
+
+    .form-status.error { color: #e05555; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--shark);
+      border-top: 1px solid var(--border);
+      padding: 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-logo {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      letter-spacing: 0.1em;
+      color: var(--white);
+    }
+
+    .footer-logo span { color: var(--cyan); }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .footer-links a {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--cyan); }
+
+    .footer-copy {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      color: var(--border);
+      letter-spacing: 0.08em;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--shark); }
+    ::-webkit-scrollbar-thumb { background: var(--border); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--cyan); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      section { padding: 5rem 1.5rem; }
+      .about-grid, .dept-panel.active, .trophy-timeline { grid-template-columns: 1fr; gap: 2.5rem; }
+      .mission-list { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .impact-cards { grid-template-columns: repeat(2, 1fr); }
+      .hero-stats { gap: 2rem; flex-wrap: wrap; }
+      footer { flex-direction: column; gap: 2rem; text-align: center; }
+    }
+
+    @media (max-width: 600px) {
+      .impact-cards { grid-template-columns: 1fr; }
+      .hero-cta { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#hero" class="nav-logo">X-<span>SHARC</span></a>
+    <ul class="nav-links">
+      <li><a href="#about">Mission</a></li>
+      <li><a href="#impact">Impact</a></li>
+      <li><a href="#departments">Departments</a></li>
+      <li><a href="#trophies">Record</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-grid-lines"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-glow-2"></div>
+    <img src="xsharclogo.png" alt="X-SHARC Logo" class="hero-logo" />
+
+    <p class="hero-tag">// FRC Team #6838</p>
+
+    <h1 class="hero-title">
+      X<span class="accent">-</span><br />
+      SHA<span class="accent-o">R</span>C
+    </h1>
+
+    <p class="hero-sub">
+      Engineering the future through robotics, teamwork, and relentless
+      innovation. We don't just build robots - we build leaders, innovators,
+      and changemakers. Competing on the world stage since 2017. 
+    </p>
+
+    <div class="hero-cta">
+      <a href="#about" class="btn btn-primary">Learn More</a>
+      <a href="#trophies" class="btn btn-ghost">Our Record</a>
+    </div>
+
+    <div class="hero-stats">
+      <div>
+        <div class="hero-stat-num">8<span>th</span></div>
+        <div class="hero-stat-label">World Rank (2022 Accuracy)</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">13<span>th</span></div>
+        <div class="hero-stat-label">World Rank (Win Rate)</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">4<span>×</span></div>
+        <div class="hero-stat-label">World Championship</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">1500<span>+</span></div>
+        <div class="hero-stat-label">Youth Reached</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FRC WHAT IS -->
+  <section id="frc">
+    <div class="frc-inner reveal">
+      <p class="section-tag">// What is FRC</p>
+      <h2 class="section-title">FIRST Robotics<br />Competition</h2>
+      <div class="divider" style="margin: 2rem auto;"></div>
+      <p class="frc-body">
+        <strong>FRC (FIRST Robotics Competition)</strong> is a global robotics tournament where young people design, build, and compete with robots. It's more than a competition — it's a community that equips youth with <strong>engineering skills, collaboration, and leadership</strong> for the future.
+      </p>
+    </div>
+  </section>
+
+  <!-- ABOUT / MISSION -->
+  <section id="about">
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p class="section-tag">// About Us</p>
+        <h2 class="section-title">Who We Are</h2>
+        <div class="divider"></div>
+        <p class="about-intro">
+          X-SHARC is a Turkish FRC team affiliated with SEV American College in Istanbul. Our team was founded in 2017 at our school, in response to a student request for a robotics team.
+        </p>
+        <p class="about-body">
+          Our members came up with the team name inspired by our school's mascot, the shark; X-ZONE, the name of our workspace; and the abbreviation SAC, the short name of our school — and our team name turned into X-SHARC.
+        </p>
+        <p class="about-body">
+          We started our FRC journey with the 2017 Turkey Off-Season, where we were part of the winning alliance among 54 teams. We then won the Rookie All-Star Award at our first regional FRC tournament, Istanbul Regional 2018, which led us to the 2018 Championship in Houston. At the 2019 Istanbul Regional we received the Excellence in Engineering Award, and at the newly opened Bosphorus Regional we were again in the winning alliance and won the Industrial Design Award — earning our second trip to Houston.
+        </p>
+        <p class="about-body">
+          Also in 2019, we participated in both the Mersin Off-Season and GameX tournaments, winning the Quality Award at GameX. After navigating the pandemic, we came back stronger than ever — placing first at both İzmir and Bosphorus, and returning to the World Championship in Houston in 2022. In the years since, we have been unstoppable, and we hope history will repeat itself.
+        </p>
+      </div>
+
+      <div class="about-divider-full reveal" style="transition-delay:0.1s"></div>
+
+      <div class="reveal" style="transition-delay: 0.15s; width: 100%;">
+        <p class="section-tag" style="text-align:center; margin-bottom: 2rem;">// Our Mission</p>
+        <ul class="mission-list">
+          <li class="mission-item">
+            <span class="mission-num">01</span>
+            <span class="mission-text">Foster creativity and innovation in engineering and technology fields.</span>
+          </li>
+          <li class="mission-item">
+            <span class="mission-num">02</span>
+            <span class="mission-text">Provide practical STEAM skills through hands-on, experience-driven learning.</span>
+          </li>
+          <li class="mission-item">
+            <span class="mission-num">03</span>
+            <span class="mission-text">Inspire youth to lead in science and technology domains.</span>
+          </li>
+          <li class="mission-item">
+            <span class="mission-num">04</span>
+            <span class="mission-text">Spread STEAM awareness and knowledge to wider communities.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- IMPACT -->
+  <section style="padding: 7rem 3rem;">
+    <div id="impact">
+      <div class="impact-header reveal">
+        <p class="section-tag">// Social Impact</p>
+        <h2 class="section-title">Community<br />Projects</h2>
+        <div class="divider" style="margin: 2rem auto;"></div>
+      </div>
+      <div class="impact-cards">
+        <div class="impact-card reveal" style="transition-delay:0.05s">
+          <div class="impact-num">25<span style="color:var(--orange);font-size:2rem">+</span></div>
+          <div class="impact-label">Workshops Held</div>
+        </div>
+        <div class="impact-card reveal" style="transition-delay:0.1s">
+          <div class="impact-num">1500<span style="color:var(--orange);font-size:2rem">+</span></div>
+          <div class="impact-label">Youth Reached</div>
+        </div>
+        <div class="impact-card reveal" style="transition-delay:0.15s">
+          <div class="impact-num">19K+<span style="color:var(--orange);font-size:2rem">₺</span></div>
+          <div class="impact-label">Donations Raised</div>
+        </div>
+        <div class="impact-card reveal" style="transition-delay:0.2s">
+          <div class="impact-num">50<span style="color:var(--orange);font-size:2rem">+</span></div>
+          <div class="impact-label">Teams Engaged</div>
+        </div>
+        <div class="impact-card reveal" style="transition-delay:0.25s">
+          <div class="impact-num">3</div>
+          <div class="impact-label">Innovation Summits</div>
+        </div>
+        <div class="impact-card reveal" style="transition-delay:0.3s">
+          <div class="impact-num">5</div>
+          <div class="impact-label">Kick-off Events</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEPARTMENTS -->
+  <section id="departments">
+    <div class="dept-layout">
+      <div class="dept-header reveal">
+        <p class="section-tag">// Our Team Structure</p>
+        <h2 class="section-title">Five<br />Departments</h2>
+        <div class="divider"></div>
+      </div>
+
+      <div class="dept-tabs">
+        <button class="dept-tab active" onclick="switchDept('cad', this)">CAD</button>
+        <button class="dept-tab" onclick="switchDept('mechanical', this)">Mechanical</button>
+        <button class="dept-tab" onclick="switchDept('electronics', this)">Electronics</button>
+        <button class="dept-tab" onclick="switchDept('software', this)">Software</button>
+        <button class="dept-tab" onclick="switchDept('pr', this)">PR</button>
+      </div>
+
+      <div class="dept-panels">
+
+        <div class="dept-panel active" id="dept-cad">
+          <div>
+            <div class="dept-icon-box"><span class="dept-monogram">CD</span></div>
+            <div class="dept-name">CAD</div>
+            <div class="dept-tagline">Design & Visualization</div>
+            <p class="dept-desc">The CAD department uses 3D modeling software (Onshape) to visualize and plan the robot before a single bolt is turned. From brainstorm to full assembly, CAD is the blueprint of everything we build.</p>
+          </div>
+          <div class="dept-steps">
+            <div class="dept-step"><span class="step-num">01</span><div class="step-content"><strong>Brainstorming</strong><p>Team-wide ideation and concept development sessions.</p></div></div>
+            <div class="dept-step"><span class="step-num">02</span><div class="step-content"><strong>Prototyping</strong><p>Designing prototypes to test emerging concepts.</p></div></div>
+            <div class="dept-step"><span class="step-num">03</span><div class="step-content"><strong>Mechanism Decision</strong><p>Selecting mechanisms based on prototype performance.</p></div></div>
+            <div class="dept-step"><span class="step-num">04</span><div class="step-content"><strong>Subsystem Drawing</strong><p>Drawing all robot subsystems in Onshape.</p></div></div>
+            <div class="dept-step"><span class="step-num">05</span><div class="step-content"><strong>Assembly</strong><p>Combining subsystems into the final robot model.</p></div></div>
+          </div>
+        </div>
+
+        <div class="dept-panel" id="dept-mechanical">
+          <div>
+            <div class="dept-icon-box"><span class="dept-monogram">MK</span></div>
+            <div class="dept-name">MECHANICAL</div>
+            <div class="dept-tagline">Build & Assemble</div>
+            <p class="dept-desc">The Mechanical department takes the CAD designs and brings them to life — fabricating parts, assembling the robot, and ensuring structural integrity throughout the season.</p>
+          </div>
+          <div class="dept-steps">
+            <div class="dept-step"><span class="step-num">01</span><div class="step-content"><strong>Fabrication & Assembly</strong><p>Parts manufactured according to CAD designs and assembled.</p></div></div>
+            <div class="dept-step"><span class="step-num">02</span><div class="step-content"><strong>Maintenance & Repair</strong><p>Ongoing maintenance and rapid repairs when needed.</p></div></div>
+            <div class="dept-step"><span class="step-num">03</span><div class="step-content"><strong>Structural Integrity</strong><p>Checks to ensure the robot's structure and function are sound.</p></div></div>
+          </div>
+        </div>
+
+        <div class="dept-panel" id="dept-electronics">
+          <div>
+            <div class="dept-icon-box"><span class="dept-monogram">EL</span></div>
+            <div class="dept-name">ELECTRONICS</div>
+            <div class="dept-tagline">Power & Control</div>
+            <p class="dept-desc">The Electronics department designs and optimizes all electrical and control systems. From wiring to power distribution, they keep the robot alive and responsive.</p>
+          </div>
+          <div class="dept-steps">
+            <div class="dept-step"><span class="step-num">01</span><div class="step-content"><strong>Electrical System Design</strong><p>Designing and wiring all electrical systems.</p></div></div>
+            <div class="dept-step"><span class="step-num">02</span><div class="step-content"><strong>Control System Setup</strong><p>Installing and configuring all control components.</p></div></div>
+            <div class="dept-step"><span class="step-num">03</span><div class="step-content"><strong>Power & Signal Management</strong><p>Ensuring reliable power and signal integrity.</p></div></div>
+            <div class="dept-step"><span class="step-num">04</span><div class="step-content"><strong>Troubleshooting</strong><p>Rapid diagnosis and resolution of electrical issues mid-competition.</p></div></div>
+          </div>
+        </div>
+
+        <div class="dept-panel" id="dept-software">
+          <div>
+            <div class="dept-icon-box"><span class="dept-monogram">SW</span></div>
+            <div class="dept-name">SOFTWARE</div>
+            <div class="dept-tagline">Code & Autonomy</div>
+            <p class="dept-desc">The Software department writes and tests all code that controls the robot. Using WPILib with Java, they handle everything from driver controls to autonomous path planning.</p>
+          </div>
+          <div class="dept-steps">
+            <div class="dept-step"><span class="step-num">01</span><div class="step-content"><strong>Coding</strong><p>Writing robot control code in Java using the WPILib library.</p></div></div>
+            <div class="dept-step"><span class="step-num">02</span><div class="step-content"><strong>Vision Processing</strong><p>Using Limelight for camera-based target tracking.</p></div></div>
+            <div class="dept-step"><span class="step-num">03</span><div class="step-content"><strong>Autonomy</strong><p>Implementing path planning systems for full autonomous movement.</p></div></div>
+          </div>
+        </div>
+
+        <div class="dept-panel" id="dept-pr">
+          <div>
+            <div class="dept-icon-box"><span class="dept-monogram">PR</span></div>
+            <div class="dept-name">PR</div>
+            <div class="dept-tagline">Media & Relations</div>
+            <p class="dept-desc">The PR department tells our story. From social media to sponsorships, they connect X-SHARC with the world, manage partnerships, and lead our community outreach efforts.</p>
+          </div>
+          <div class="dept-steps">
+            <div class="dept-step"><span class="step-num">01</span><div class="step-content"><strong>Content & Social Media</strong><p>Creating content and maintaining active social channels.</p></div></div>
+            <div class="dept-step"><span class="step-num">02</span><div class="step-content"><strong>Communication</strong><p>Managing FRC team interactions and event coordination.</p></div></div>
+            <div class="dept-step"><span class="step-num">03</span><div class="step-content"><strong>Marketing & Sponsorship</strong><p>Handling marketing materials and sponsor agreements.</p></div></div>
+            <div class="dept-step"><span class="step-num">04</span><div class="step-content"><strong>Events & Outreach</strong><p>Photo/video at events, and managing social responsibility projects.</p></div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- TROPHIES -->
+  <section id="trophies">
+    <div>
+      <div class="trophy-header reveal">
+        <p class="section-tag">// Competition History</p>
+        <h2 class="section-title">Competition<br />Record</h2>
+        <div class="divider"></div>
+      </div>
+      <div class="trophy-timeline">
+        <div class="trophy-era reveal">
+          <div class="era-label">2017–2019</div>
+          <div class="era-sub">The Foundation Years</div>
+          <ul class="trophy-list">
+            <li class="trophy-item">
+              <div class="trophy-badge"></div>
+              <span class="trophy-year">2017</span>
+              <span class="trophy-desc">Off Season</span>
+              <span class="trophy-award">Winner</span>
+            </li>
+            <li class="trophy-item">
+              <div class="trophy-badge"></div>
+              <span class="trophy-year">2018</span>
+              <span class="trophy-desc">Istanbul Regional</span>
+              <span class="trophy-award">Rookie All Star</span>
+            </li>
+            <li class="trophy-item">
+              <div class="trophy-badge world"></div>
+              <span class="trophy-year">2018</span>
+              <span class="trophy-desc">Houston World Championship</span>
+              <span class="trophy-award">—</span>
+            </li>
+            <li class="trophy-item">
+              <div class="trophy-badge"></div>
+              <span class="trophy-year">2019</span>
+              <span class="trophy-desc">Istanbul Regional</span>
+              <span class="trophy-award">Excellence in Eng.</span>
+            </li>
+            <li class="trophy-item">
+              <div class="trophy-badge"></div>
+              <span class="trophy-year">2019</span>
+              <span class="trophy-desc">Bosphorus Regional</span>
+              <span class="trophy-award">Winner + Industrial Design</span>
+            </li>
+            <li class="trophy-item">
+              <div class="trophy-badge world"></div>
+              <span class="trophy-year">2019</span>
+              <span class="trophy-desc">Houston World Championship</span>
+              <span class="trophy-award">—</span>
+            </li>
+            <li class="trophy-item">
+              <div class="trophy-badge"></div>
+              <span class="trophy-year">2019</span>
+              <span class="trophy-desc">GameX Off-Season</span>
+              <span class="trophy-award">Winner + Quality Award</span>
+            </li>
+            <li class="trophy-item">
+              <div class="trophy-badge finalist"></div>
+              <span class="trophy-year">2019</span>
+              <span class="trophy-desc">Mersin Off-Season</span>
+              <span class="trophy-award">Finalist + Industrial Design</span>
+            </li>
+          </ul>
+        </div>
+        <div class="trophy-era reveal" style="transition-delay:0.15s">
+          <div class="era-label">2021–2025</div>
+          <div class="era-sub">Dominance Era</div>
+          <ul class="trophy-list">
+            <li class="trophy-item">
+              <div class="trophy-badge"></div>
+              <span class="trophy-year">2021</span>
+              <span class="trophy-desc">İzmir Off-Season</span>
+              <span class="trophy-award">Winner</span>
+            </li>
+            <li class="trophy-item">
+              <div class="trophy-badge"></div>
+              <span class="trophy-year">2022</span>
+              <span class="trophy-desc">İzmir Regional</span>
+              <span class="trophy-award">Winner + Autonomous</span>
+            </li>
+            <li class="trophy-item">
+              <div class="trophy-badge"></div>
+              <span class="trophy-year">2022</span>
+              <span class="trophy-desc">Bosphorus Regional</span>
+              <span class="trophy-award">Winner + Excellence in Eng.</span>
+            </li>
+            <li class="trophy-item">
+              <div class="trophy-badge world"></div>
+              <span class="trophy-year">2022</span>
+              <span class="trophy-desc">Houston World Championship</span>
+              <span class="trophy-award">—</span>
+            </li>
+            <li class="trophy-item">
+              <div class="trophy-badge"></div>
+              <span class="trophy-year">2023</span>
+              <span class="trophy-desc">Bosphorus Regional</span>
+              <span class="trophy-award">Winner + Autonomous</span>
+            </li>
+            <li class="trophy-item">
+              <div class="trophy-badge"></div>
+              <span class="trophy-year">2023</span>
+              <span class="trophy-desc">Haliç Regional</span>
+              <span class="trophy-award">Winner + Quality Award</span>
+            </li>
+            <li class="trophy-item">
+              <div class="trophy-badge world"></div>
+              <span class="trophy-year">2023</span>
+              <span class="trophy-desc">Houston World Championship</span>
+              <span class="trophy-award">—</span>
+            </li>
+            <li class="trophy-item">
+              <div class="trophy-badge finalist"></div>
+              <span class="trophy-year">2024</span>
+              <span class="trophy-desc">Bosphorus Regional</span>
+              <span class="trophy-award">Finalist</span>
+            </li>
+            <li class="trophy-item">
+              <div class="trophy-badge finalist"></div>
+              <span class="trophy-year">2025</span>
+              <span class="trophy-desc">Istanbul Regional</span>
+              <span class="trophy-award">Finalist</span>
+            </li>
+            <li class="trophy-item">
+              <div class="trophy-badge world"></div>
+              <span class="trophy-year">2025</span>
+              <span class="trophy-desc">Houston World Championship</span>
+              <span class="trophy-award">—</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="contact-inner reveal">
+      <p class="section-tag">// Get In Touch</p>
+      <h2 class="section-title">Contact Us</h2>
+      <div class="divider" style="margin: 2rem auto;"></div>
+      <p class="about-body">Have a question, want to collaborate, or interested in supporting X-SHARC? Reach out to us directly.</p>
+      <a href="mailto:team6838@sevkoleji.k12.tr" class="contact-email-display">team6838@sevkoleji.k12.tr</a>
+
+      <div class="contact-form" id="contactForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fname">First Name</label>
+            <input type="text" id="fname" placeholder="Jane" />
+          </div>
+          <div class="form-group">
+            <label for="lname">Last Name</label>
+            <input type="text" id="lname" placeholder="Doe" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" placeholder="jane@example.com" />
+        </div>
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message" rows="6" placeholder="Your message..."></textarea>
+        </div>
+        <div class="form-status" id="formStatus"></div>
+        <button class="btn btn-primary form-submit" onclick="submitForm()">Send Message</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">X-<span>SHARC</span></div>
+    <ul class="footer-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#departments">Team</a></li>
+      <li><a href="#trophies">Record</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="footer-copy">© 2025 X-SHARC · FRC Team · Istanbul</div>
+  </footer>
+
+  <!-- EmailJS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+  <script>
+   
+    const EMAILJS_PUBLIC_KEY  = '8s7U9reDRNYbh37-g';
+    const EMAILJS_SERVICE_ID  = 'service_9al06la';
+    const EMAILJS_TEMPLATE_ID = 'template_qlhxelf';
+
+    emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+
+    // Dept tab switcher
+    function switchDept(id, btn) {
+      document.querySelectorAll('.dept-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.dept-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('dept-' + id).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    // Contact form
+    async function submitForm() {
+      const fname   = document.getElementById('fname').value.trim();
+      const lname   = document.getElementById('lname').value.trim();
+      const email   = document.getElementById('email').value.trim();
+      const message = document.getElementById('message').value.trim();
+      const status  = document.getElementById('formStatus');
+      const btn     = document.querySelector('.form-submit');
+
+      if (!fname || !lname || !email || !message) {
+        status.textContent = 'Please fill in all fields before sending.';
+        status.className = 'form-status error';
+        return;
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        status.textContent = 'Please enter a valid email address.';
+        status.className = 'form-status error';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+      status.textContent = '';
+      status.className = 'form-status';
+
+      try {
+        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+          from_name:  `${fname} ${lname}`,
+          from_email: email,
+          to_email:   'team6838@sevkoleji.k12.tr',
+          message:    message,
+        });
+
+        // Auto-reply — separate try/catch so it never blocks the main send
+        try {
+          await emailjs.send(EMAILJS_SERVICE_ID, 'template_kcdnmz9', {
+            reply_to:   email,
+            to_name:    `${fname} ${lname}`,
+            to_email:   email,
+          });
+        } catch (autoErr) {
+          status.textContent = `Message sent! (Auto-reply error: ${autoErr?.text || autoErr?.message || JSON.stringify(autoErr)})`;
+          console.warn('Auto-reply failed:', JSON.stringify(autoErr));
+        }
+
+        status.textContent = 'Message sent successfully. We will get back to you soon.';
+        status.className = 'form-status';
+        document.getElementById('fname').value = '';
+        document.getElementById('lname').value = '';
+        document.getElementById('email').value = '';
+        document.getElementById('message').value = '';
+      } catch (err) {
+        console.error('EmailJS error:', JSON.stringify(err));
+        status.textContent = `Error: ${err?.text || err?.message || JSON.stringify(err)} — please email us directly at team6838@sevkoleji.k12.tr`;
+        status.className = 'form-status error';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Send Message';
+      }
+    }
+
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
