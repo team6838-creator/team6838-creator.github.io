@@ -157,6 +157,15 @@
       color: var(--white);
       opacity: 0;
       animation: fadeUp 0.8s ease 0.4s forwards;
+      
+      .hero-number {
+  display: block;
+  font-family: var(--font-display);
+  font-size: clamp(5rem, 14vw, 13rem);
+  line-height: 0.88;
+  letter-spacing: 0.04em;
+  color: var(--orange);
+}
     }
 
     .hero-title .accent { color: var(--cyan); }
@@ -813,7 +822,7 @@
 
   <!-- NAV -->
   <nav>
-    <a href="#hero" class="nav-logo">X-SHARC<span>#6838</span></a>
+    <a href="#hero" class="nav-logo">X-<span>SHARC</span></a>
     <ul class="nav-links">
       <li><a href="#about">Mission</a></li>
       <li><a href="#impact">Impact</a></li>
@@ -832,10 +841,10 @@
 
     <p class="hero-tag">// FRC Team #6838</p>
 
-    <h1 class="hero-title">
-      X<span class="accent">-</span><br />
-      SHA<span class="accent-o">R</span>C
-    </h1>
+   <h1 class="hero-title">
+  X<span class="accent-o">-</span>SHA<span class="accent-o">R</span>C
+  <span class="hero-number">#6838</span>
+</h1>
 
     <p class="hero-sub">
       Engineering the future through robotics, teamwork, and relentless
