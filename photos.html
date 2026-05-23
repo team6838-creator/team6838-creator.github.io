@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Photos | X-SHARC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --shark: #050805;
+      --deep: #080f08;
+      --surface: #0f180f;
+      --card: #111f11;
+      --border: #1e301e;
+      --cyan: #4db876;
+      --orange: #7ab85a;
+      --white: #f0f4ff;
+      --muted: #4d6b4d;
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-body: 'Barlow', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--shark);
+      color: var(--white);
+      font-family: var(--font-body);
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 3rem;
+      background: rgba(5, 8, 5, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      letter-spacing: 0.12em;
+      color: var(--cyan);
+      text-decoration: none;
+    }
+
+    .nav-logo span { color: var(--orange); }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--cyan); }
+    .nav-links a.active { color: var(--cyan); }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      padding: 10rem 3rem 4rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-tag {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 0.8rem;
+    }
+
+    .page-title {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 8vw, 7rem);
+      letter-spacing: 0.04em;
+      line-height: 0.9;
+      color: var(--white);
+    }
+
+    .divider {
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--cyan), transparent);
+      margin: 2rem 0;
+    }
+
+    .page-desc {
+      font-size: 0.95rem;
+      color: var(--muted);
+      max-width: 500px;
+      line-height: 1.8;
+    }
+
+    /* ── YEAR TABS ── */
+    .year-tabs-wrap {
+      position: sticky;
+      top: 65px;
+      z-index: 50;
+      background: rgba(5, 8, 5, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 3rem;
+    }
+
+    .year-tabs {
+      display: flex;
+      gap: 0;
+      max-width: 1200px;
+      margin: 0 auto;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .year-tabs::-webkit-scrollbar { display: none; }
+
+    .year-tab {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      padding: 1rem 1.8rem;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+      white-space: nowrap;
+    }
+
+    .year-tab:hover { color: var(--cyan); }
+    .year-tab.active { color: var(--cyan); border-bottom-color: var(--cyan); }
+
+    /* ── YEAR SECTIONS ── */
+    .photos-content {
+      width: 100%;
+      padding: 4rem 2rem 8rem;
+    }
+
+    .year-section { display: none; width: 100%; }
+    .year-section.active { display: block; width: 100%; }
+
+    .year-heading {
+      font-family: var(--font-display);
+      font-size: 5rem;
+      letter-spacing: 0.06em;
+      color: var(--white);
+      margin-bottom: 0.3rem;
+      line-height: 1;
+    }
+
+    .year-heading span { color: var(--cyan); }
+
+    .year-sub {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 2.5rem;
+    }
+
+    /* ── PHOTO GRID ── */
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      width: 100%;
+    }
+
+    .photo-slot {
+      aspect-ratio: 4/3;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+
+    .photo-slot:hover { border-color: var(--cyan); transform: scale(1.01); }
+
+    .photo-slot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s;
+    }
+
+    .photo-slot:hover img { transform: scale(1.05); }
+
+    .photo-slot .photo-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      color: var(--border);
+    }
+
+    .photo-placeholder-icon {
+      width: 40px; height: 40px;
+      border: 1px dashed var(--border);
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .photo-placeholder-icon svg {
+      width: 18px; height: 18px;
+      stroke: var(--border);
+    }
+
+    .photo-placeholder-text {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--border);
+    }
+
+    .photo-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(5,8,5,0.7) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity 0.25s;
+      display: flex;
+      align-items: flex-end;
+      padding: 1rem;
+    }
+
+    .photo-slot:hover .photo-overlay { opacity: 1; }
+
+    .photo-caption {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.08em;
+      color: var(--white);
+      text-transform: uppercase;
+    }
+
+    /* ── UPLOAD HINT ── */
+    .upload-hint {
+      margin-top: 2.5rem;
+      padding: 1.2rem 1.5rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--cyan);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .upload-hint-text {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .upload-hint-text strong { color: var(--cyan); }
+
+    /* ── LIGHTBOX ── */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 8, 5, 0.95);
+      z-index: 999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .lightbox.open { display: flex; }
+
+    .lightbox img {
+      max-width: 90vw;
+      max-height: 85vh;
+      object-fit: contain;
+      border: 1px solid var(--border);
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 1.5rem; right: 2rem;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .lightbox-close:hover { color: var(--cyan); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--shark);
+      border-top: 1px solid var(--border);
+      padding: 2rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-logo {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      letter-spacing: 0.1em;
+      color: var(--white);
+      text-decoration: none;
+    }
+
+    .footer-logo span { color: var(--cyan); }
+
+    .footer-copy {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      color: var(--border);
+      letter-spacing: 0.08em;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .photo-grid { grid-template-columns: repeat(2, 1fr); }
+      .photos-content { padding: 3rem 1.5rem 6rem; }
+      .page-header { padding: 8rem 1.5rem 3rem; }
+      .year-tabs-wrap { padding: 0 1.5rem; }
+    }
+
+    @media (max-width: 500px) {
+      .photo-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-logo">X-<span>SHARC</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#departments">Team</a></li>
+      <li><a href="index.html#trophies">Record</a></li>
+      <li><a href="photos.html" class="active">Photos</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <p class="section-tag">// Our Journey in Photos</p>
+    <h1 class="page-title">Photo<br />Gallery</h1>
+    <div class="divider"></div>
+    <p class="page-desc">A visual archive of X-SHARC through the years — competitions, builds, and moments that defined our team.</p>
+  </div>
+
+  <!-- YEAR TABS -->
+  <div class="year-tabs-wrap">
+    <div class="year-tabs">
+      <button class="year-tab active" onclick="switchYear('2019', this)">2019</button>
+      <button class="year-tab" onclick="switchYear('2020', this)">2020</button>
+      <button class="year-tab" onclick="switchYear('2021', this)">2021</button>
+      <button class="year-tab" onclick="switchYear('2022', this)">2022</button>
+      <button class="year-tab" onclick="switchYear('2023', this)">2023</button>
+      <button class="year-tab" onclick="switchYear('2024', this)">2024</button>
+      <button class="year-tab" onclick="switchYear('2025', this)">2025</button>
+      <button class="year-tab" onclick="switchYear('2026', this)">2026</button>
+    </div>
+  </div>
+
+  <!-- PHOTOS CONTENT -->
+  <div class="photos-content">
+
+    <!-- 2019 -->
+    <div class="year-section active" id="year-2019">
+      <div class="year-heading">20<span>19</span></div>
+      <div class="year-sub">Istanbul Regional · Bosphorus Regional · Houston Championship · GameX · Mersin</div>
+      <div class="photo-grid" id="grid-2019">
+  <div class="photo-slot" onclick="openLightbox(this)">
+    <img src="photos/2019/photo1.jpg" />
+    <div class="photo-overlay"><span class="photo-caption">2019</span></div>
+  </div>
+  <div class="photo-slot" onclick="openLightbox(this)">
+    <img src="photos/2019/photo2.jpg" />
+    <div class="photo-overlay"><span class="photo-caption">2019</span></div>
+  </div>
+  <div class="photo-slot" onclick="openLightbox(this)">
+    <img src="photos/2019/photo3.jpg" />
+    <div class="photo-overlay"><span class="photo-caption">2019</span></div>
+  </div>
+  <div class="photo-slot" onclick="openLightbox(this)">
+    <img src="photos/2019/photo4.jpg" />
+    <div class="photo-overlay"><span class="photo-caption">2019</span></div>
+  </div>
+  <div class="photo-slot" onclick="openLightbox(this)">
+    <img src="photos/2019/photo5.jpg" />
+    <div class="photo-overlay"><span class="photo-caption">2019</span></div>
+  </div>
+  <div class="photo-slot" onclick="openLightbox(this)">
+    <img src="photos/2019/photo6.jpg" />
+    <div class="photo-overlay"><span class="photo-caption">2019</span></div>
+  </div>
+  <div class="photo-slot" onclick="openLightbox(this)">
+    <img src="photos/2019/photo7.jpg" />
+    <div class="photo-overlay"><span class="photo-caption">2019</span></div>
+  </div>
+</div>
+      </div>
+      <div class="upload-hint">
+        
+        </div>
+      </div>
+    </div>
+
+    <!-- 2020 -->
+    <div class="year-section" id="year-2020">
+      <div class="year-heading">20<span>20</span></div>
+      <div class="year-sub">Istanbul Regional · Innovation in Control Award</div>
+      <div class="photo-grid" id="grid-2020">
+  <div class="photo-slot" onclick="openLightbox(this)">
+    <img src="photos/2020/photo1.jpg" />
+    <div class="photo-overlay"><span class="photo-caption">2020</span></div>
+  </div>
+  <div class="photo-slot" onclick="openLightbox(this)">
+    <img src="photos/2020/photo2.jpg" />
+    <div class="photo-overlay"><span class="photo-caption">2020</span></div>
+  </div>
+  <div class="photo-slot" onclick="openLightbox(this)">
+    <img src="photos/2020/photo3.jpg" />
+    <div class="photo-overlay"><span class="photo-caption">2020</span></div>
+  </div>
+  <div class="photo-slot" onclick="openLightbox(this)">
+    <img src="photos/2020/photo4.jpg" />
+    <div class="photo-overlay"><span class="photo-caption">2020</span></div>
+  </div>
+  <div class="photo-slot" onclick="openLightbox(this)">
+    <img src="photos/2020/photo5.jpg" />
+    <div class="photo-overlay"><span class="photo-caption">2020</span></div>
+  </div>
+</div>
+      
+      </div>
+    </div>
+
+    <!-- 2021 -->
+    <div class="year-section" id="year-2021">
+      <div class="year-heading">20<span>21</span></div>
+      <div class="year-sub">İzmir Off-Season · Winning Alliance</div>
+      <div class="photo-grid" id="grid-2021">
+  <div class="photo-slot" onclick="openLightbox(this)">
+    <img src="photos/2021/photo1.jpg" />
+    <div class="photo-overlay"><span class="photo-caption">2021</span></div>
+  </div>
+</div>
+       
+      </div>
+    </div>
+
+    <!-- 2022 -->
+    <div class="year-section" id="year-2022">
+      <div class="year-heading">20<span>22</span></div>
+      <div class="year-sub">İzmir Regional · Bosphorus Regional · Houston Championship · Pendik Off-Season</div>
+     <div class="photo-grid" id="grid-2022">
+  <div class="photo-slot" onclick="openLightbox(this)">
+    <img src="photos/2022/photo1.PNG" />
+    <div class="photo-overlay"><span class="photo-caption">2022</span></div>
+  </div>
+  <div class="photo-slot" onclick="openLightbox(this)">
+    <img src="photos/2022/photo2.PNG" />
+    <div class="photo-overlay"><span class="photo-caption">2022</span></div>
+  </div>
+  <div class="photo-slot" onclick="openLightbox(this)">
+    <img src="photos/2022/photo3.jpg" />
+    <div class="photo-overlay"><span class="photo-caption">2022</span></div>
+  </div>
+  <div class="photo-slot" onclick="openLightbox(this)">
+    <img src="photos/2022/photo4.jpg" />
+    <div class="photo-overlay"><span class="photo-caption">2022</span></div>
+  </div>
+  <div class="photo-slot" onclick="openLightbox(this)">
+    <img src="photos/2022/photo5.jpg" />
+    <div class="photo-overlay"><span class="photo-caption">2022</span></div>
+  </div>
+  <div class="photo-slot" onclick="openLightbox(this)">
+    <img src="photos/2022/photo6.jpg" />
+    <div class="photo-overlay"><span class="photo-caption">2022</span></div>
+  </div>
+  <div class="photo-slot" onclick="openLightbox(this)">
+    <img src="photos/2022/photo7.jpg" />
+    <div class="photo-overlay"><span class="photo-caption">2022</span></div>
+  </div>
+  <div class="photo-slot" onclick="openLightbox(this)">
+    <img src="photos/2022/photo8.jpg" />
+    <div class="photo-overlay"><span class="photo-caption">2022</span></div>
+  </div>
+  <div class="photo-slot" onclick="openLightbox(this)">
+    <img src="photos/2022/photo9.jpg" />
+    <div class="photo-overlay"><span class="photo-caption">2022</span></div>
+  </div>
+  <div class="photo-slot" onclick="openLightbox(this)">
+    <img src="photos/2022/photo10.jpg" />
+    <div class="photo-overlay"><span class="photo-caption">2022</span></div>
+  </div>
+</div>
+       
+      </div>
+    </div>
+
+    <!-- 2023 -->
+    <div class="year-section" id="year-2023">
+      <div class="year-heading">20<span>23</span></div>
+      <div class="year-sub">Bosphorus Regional · Haliç Regional · Houston Championship</div>
+    <div class="photo-grid" id="grid-2023">
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2023/photo1.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2023</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2023/photo2.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2023</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2023/photo3.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2023</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2023/photo4.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2023</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2023/photo5.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2023</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2023/photo6.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2023</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2023/photo7.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2023</span></div>
+ </div>
+</div>
+
+    
+       
+    </div>
+
+    <!-- 2024 -->
+    <div class="year-section" id="year-2024">
+      <div class="year-heading">20<span>24</span></div>
+      <div class="year-sub">Haliç Regional · Istanbul Regional · Bosphorus Regional · Off-Season</div>
+     <div class="photo-grid" id="grid-2024">
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2024/photo1.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2024</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2024/photo2.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2024</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2024/photo3.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2024</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2024/photo4.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2024</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2024/photo5.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2024</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2024/photo6.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2024</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2024/photo7.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2024</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2024/photo8.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2024</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2024/photo9.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2024</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2024/photo10.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2024</span></div>
+ </div>
+</div>
+ 
+      
+     
+    </div>
+
+    <!-- 2025 -->
+    <div class="year-section" id="year-2025">
+      <div class="year-heading">20<span>25</span></div>
+      <div class="year-sub">Bosphorus Regional · Haliç Regional · Houston Championship · Yıldız Off-Season</div>
+      <div class="photo-grid" id="grid-2025">
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2025/photo1.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2025</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2025/photo2.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2025</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2025/photo3.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2025</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2025/photo4.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2025</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2025/photo5.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2025</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2025/photo6.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2025</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2025/photo7.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2025</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2025/photo8.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2025</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2025/photo9.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2025</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2025/photo10.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2025</span></div>
+ </div>
+</div>
+
+      
+       
+      </div>
+    </div>
+
+    <!-- 2026 -->
+    <div class="year-section" id="year-2026">
+      <div class="year-heading">20<span>26</span></div>
+      <div class="year-sub">Bosphorus Regional · Yeditepe Regional</div>
+      <div class="photo-grid" id="grid-2026">
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2026/photo1.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2026</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2026/photo2.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2026</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2026/photo3.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2026</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2026/photo4.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2026</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2026/photo5.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2026</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2026/photo6.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2026</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2026/photo7.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2026</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2026/photo8.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2026</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2026/photo9.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2026</span></div>
+ </div>
+ <div class="photo-slot" onclick="openLightbox(this)">
+   <img src="photos/2026/photo10.jpg" />
+   <div class="photo-overlay"><span class="photo-caption">2026</span></div>
+ </div>
+</div>
+
+       
+      </div>
+    </div>
+
+  </div>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <button class="lightbox-close" onclick="closeLightbox()">Close ✕</button>
+    <img id="lightbox-img" src="" alt="" />
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <a href="index.html" class="footer-logo">X-<span>SHARC</span></a>
+    <div class="footer-copy">© 2025 X-SHARC · FRC Team · Istanbul</div>
+  </footer>
+
+  <script>
+    function switchYear(year, btn) {
+      document.querySelectorAll('.year-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.year-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('year-' + year).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    function openLightbox(slot) {
+      const img = slot.querySelector('img');
+      if (!img) return;
+      document.getElementById('lightbox-img').src = img.src;
+      document.getElementById('lightbox').classList.add('open');
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('open');
+      document.getElementById('lightbox-img').src = '';
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeLightbox();
+    });
+  </script>
+
+</body>
+</html>
