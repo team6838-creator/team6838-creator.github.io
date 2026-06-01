@@ -160,6 +160,13 @@
     .photos-content {
       width: 100%;
       padding: 4rem 2rem 8rem;
+      <!-- BANNERS -->
+<div class="year-section" id="year-banners">
+  <div class="year-heading">BAN<span>NERS</span></div>
+  <div class="year-sub">Team Banners & Graphics</div>
+  <div class="photo-grid" id="grid-banners">
+  </div>
+</div>
     }
 
     .year-section { display: none; width: 100%; }
@@ -355,7 +362,11 @@
       color: var(--border);
       letter-spacing: 0.08em;
     }
-
+.year-tab-divider {
+  width: 1px;
+  background: var(--border);
+  margin: 0.5rem 0.5rem;
+}
     /* ── RESPONSIVE ── */
     @media (max-width: 900px) {
       nav { padding: 1rem 1.5rem; }
@@ -403,8 +414,9 @@
       <button class="year-tab" onclick="switchYear('2023', this)">2023</button>
       <button class="year-tab" onclick="switchYear('2024', this)">2024</button>
       <button class="year-tab" onclick="switchYear('2025', this)">2025</button>
-      <button class="year-tab" onclick="switchYear('2026', this)">2026</button>
-    </div>
+     <div class="year-tab-divider"></div>
+  <button class="year-tab" onclick="switchYear('banners', this)">Banners</button>
+</div>
   </div>
 
   <!-- PHOTOS CONTENT -->
