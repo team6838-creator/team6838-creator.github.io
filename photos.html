@@ -216,6 +216,18 @@
       transition: transform 0.4s;
     }
 
+
+.banner-slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  transition: transform 0.4s;
+  background: var(--card);
+}
+
+}
+
     .photo-slot:hover img { transform: scale(1.05); }
 
     .photo-slot .photo-placeholder {
@@ -543,14 +555,27 @@
     </div>
 
   </div>
-```html
+
       <!-- BANNERS -->
 <div class="year-section" id="year-banners">
   <div class="year-heading">BAN<span>NERS</span></div>
   <div class="year-sub">Team Banners & Graphics</div>
-  <div class="photo-grid" id="grid-banners">
-  <div class="photo-slot" onclick="openLightbox(this)"><img src="photos/banners/banner.png" /><div class="photo-overlay"><span class="photo-caption">Banner</span></div></div>
-</div>
+  <div class="banner-slot" id="grid-banners">
+ <div class="banner-slot" onclick="openLightbox(this)"><img src="photos/banners/banner1.png" /><div class="photo-overlay"><span class="photo-caption">Banner</span></div></div> 
+ <div class="banner-slot" onclick="openLightbox(this)"><img src="photos/banners/banner2.png" /><div class="photo-overlay"><span class="photo-caption">Banner</span></div></div>
+ <div class="banner-slot" onclick="openLightbox(this)"><img src="photos/banners/banner3.png" /><div class="photo-overlay"><span class="photo-caption">Banner</span></div></div>
+ <div class="banner-slot" onclick="openLightbox(this)"><img src="photos/banners/banner4.png" /><div class="photo-overlay"><span class="photo-caption">Banner</span></div></div>
+ <div class="banner-slot" onclick="openLightbox(this)"><img src="photos/banners/banner5.png" /><div class="photo-overlay"><span class="photo-caption">Banner</span></div></div>
+ <div class="banner-slot" onclick="openLightbox(this)"><img src="photos/banners/banner6.png" /><div class="photo-overlay"><span class="photo-caption">Banner</span></div></div>
+ <div class="banner-slot" onclick="openLightbox(this)"><img src="photos/banners/banner7.png" /><div class="photo-overlay"><span class="photo-caption">Banner</span></div></div>
+ <div class="banner-slot" onclick="openLightbox(this)"><img src="photos/banners/banner8.png" /><div class="photo-overlay"><span class="photo-caption">Banner</span></div></div>
+ <div class="banner-slot" onclick="openLightbox(this)"><img src="photos/banners/banner9.png" /><div class="photo-overlay"><span class="photo-caption">Banner</span></div></div>
+ <div class="banner-slot" onclick="openLightbox(this)"><img src="photos/banners/banner10.png" /><div class="photo-overlay"><span class="photo-caption">Banner</span></div></div>
+ <div class="banner-slot" onclick="openLightbox(this)"><img src="photos/banners/banner11.png" /><div class="photo-overlay"><span class="photo-caption">Banner</span></div></div>
+<div class="banner-slot" onclick="openLightbox(this)"><img src="photos/banners/banner12.png" /><div class="photo-overlay"><span class="photo-caption">Banner</span></div></div>
+<div class="banner-slot" onclick="openLightbox(this)"><img src="photos/banners/banner13.png" /><div class="photo-overlay"><span class="photo-caption">Banner</span></div></div>
+<div class="banner-slot" onclick="openLightbox(this)"><img src="photos/banners/banner14.png" /><div class="photo-overlay"><span class="photo-caption">Banner</span></div></div>
+
 </div>
 
   <!-- LIGHTBOX -->
