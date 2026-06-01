@@ -160,13 +160,7 @@
     .photos-content {
       width: 100%;
       padding: 4rem 2rem 8rem;
-      <!-- BANNERS -->
-<div class="year-section" id="year-banners">
-  <div class="year-heading">BAN<span>NERS</span></div>
-  <div class="year-sub">Team Banners & Graphics</div>
-  <div class="photo-grid" id="grid-banners">
-  <div class="photo-slot" onclick="openLightbox(this)"><img src="photos/banners/banner.png" /><div class="photo-overlay"><span class="photo-caption">Banner</span></div></div>
-</div>
+
 </div>
     }
 
@@ -415,6 +409,7 @@
       <button class="year-tab" onclick="switchYear('2023', this)">2023</button>
       <button class="year-tab" onclick="switchYear('2024', this)">2024</button>
       <button class="year-tab" onclick="switchYear('2025', this)">2025</button>
+       <button class="year-tab" onclick="switchYear('2026', this)">2026</button>
      <div class="year-tab-divider"></div>
   <button class="year-tab" onclick="switchYear('banners', this)">Banners</button>
 </div>
@@ -548,6 +543,15 @@
     </div>
 
   </div>
+```html
+      <!-- BANNERS -->
+<div class="year-section" id="year-banners">
+  <div class="year-heading">BAN<span>NERS</span></div>
+  <div class="year-sub">Team Banners & Graphics</div>
+  <div class="photo-grid" id="grid-banners">
+  <div class="photo-slot" onclick="openLightbox(this)"><img src="photos/banners/banner.png" /><div class="photo-overlay"><span class="photo-caption">Banner</span></div></div>
+</div>
+</div>
 
   <!-- LIGHTBOX -->
   <div class="lightbox" id="lightbox" onclick="closeLightbox()">
@@ -562,12 +566,12 @@
   </footer>
 
   <script>
-    function switchYear(year, btn) {
-      document.querySelectorAll('.year-section').forEach(s => s.classList.remove('active'));
-      document.querySelectorAll('.year-tab').forEach(t => t.classList.remove('active'));
-      document.getElementById('year-' + year).classList.add('active');
-      btn.classList.add('active');
-    }
+   function switchYear(year, btn) {
+  document.querySelectorAll('.year-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.year-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('year-' + year).classList.add('active');
+  btn.classList.add('active');
+}
 
     function openLightbox(slot) {
       const img = slot.querySelector('img');
